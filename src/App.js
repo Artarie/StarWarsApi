@@ -4,9 +4,11 @@ import {useState } from "react";
 
 
 function App() {
+
+
   return (<>
    
-        <StarWars></StarWars>
+   <StarWars></StarWars>
 
     </> );
 }
