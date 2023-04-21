@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 export function StarWars() {
 
     const [respostaPlanetas, setRespostaPlanetas] = useState(<div> </div>);
-
+    const [respostaResidents, setResident] = useState(<h1> Residentes </h1>);
     const [currentPage, setCurrentPage] = useState(1);
+    const [residentName, setResidentName] = useState();
 
     const handleNext = () => {
         setCurrentPage(currentPage + 1);
@@ -18,8 +19,13 @@ export function StarWars() {
     };
 
     useEffect(() => {
-        planets(); // This will always use latest value of count
+        planets(); 
     }, [currentPage]);
+    // useEffect(() => {
+    //     planets(); 
+    // }, [respostaResidents]);
+
+
 
     function planets() {
 
@@ -53,18 +59,43 @@ export function StarWars() {
         xmlhttp.send();
 
     }
+    const residentsHtml = [];
+    function showResidents(residents){
+
+        
+            let xmlhttpPeople = new XMLHttpRequest();
+            xmlhttpPeople.open("GET", residents);
+
+            xmlhttpPeople.onreadystatechange = function () {
+                if (xmlhttpPeople.readyState == 4 && xmlhttpPeople.status == 200) {
+                    let respostaJSONPeople = JSON.parse(xmlhttpPeople.responseText);
+                    residentsHtml.push(<p key={respostaJSONPeople.name}>{respostaJSONPeople.name}</p>);
+                    console.log(residentsHtml);
+               
+                 //   setResident(residentsHtml);
+                   
+                }
+              
+            }
+            xmlhttpPeople.send();
+            setTimeout(() => {
+                setResident(residentsHtml);
+            }, 1000);
+    }
+
 
     function showMore(name) {
+        
         let url = "https://swapi.dev/api/planets/?search=" + name;
         let xmlhttp = new XMLHttpRequest();
         xmlhttp.open("GET", url);
-
+        setResidentName();
         xmlhttp.onreadystatechange = function () {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
                 let respostaJSON = JSON.parse(xmlhttp.responseText);
                 let html = [];
-
                 respostaJSON.results.forEach((planeta) => {
+
                     let name = planeta.name;
                     let climate = planeta.climate;
                     let gravity = planeta.gravity;
@@ -75,27 +106,18 @@ export function StarWars() {
                     let terrain = planeta.terrain;
                     let surface_water = planeta.surface_water;
                     let residents = planeta.residents;
+                   
 
-                    residents.forEach(element => {
-                        let xmlhttpPeople = new XMLHttpRequest();
-                        xmlhttpPeople.open("GET", element);
+                    residents.forEach((element) => {
 
-                        xmlhttpPeople.onreadystatechange = function () {
-                            if (xmlhttpPeople.readyState == 4 && xmlhttpPeople.status == 200) {
-                                let respostaJSONPeople = JSON.parse(xmlhttpPeople.responseText);
-                                console.log(respostaJSONPeople);
-                                respostaJSONPeople.results.forEach((people) => {
-                                    console.log(people.name);
-                                });
-                            }
-                        }
-
-                        xmlhttpPeople.send();
-
-
+                        showResidents(element);
 
                     });
 
+                   
+
+    
+               
                     html.push(<div key={planeta.name}>
                         <p>Nombre : {name}</p>
                         <p>Clima: {climate}</p>
@@ -107,10 +129,10 @@ export function StarWars() {
                         <p>Terreno: {terrain}</p>
                         <p>Agua: {surface_water}</p>
 
-
-
                         <hr></hr>
                     </div>);
+
+                    // html.push(<div>{respostaResidents}</div>);
 
                 });
                 setRespostaPlanetas(html);
@@ -118,8 +140,12 @@ export function StarWars() {
 
         }
         xmlhttp.send();
-    }
 
+    
+    }
+    // useEffect(() => {
+    //     showMore(); 
+    // }, );
 
     return <><h3>Star Wars</h3>
         <div>
@@ -128,6 +154,7 @@ export function StarWars() {
 
         </div>
         <div>{respostaPlanetas}</div>
+        <div>{respostaResidents}</div>
     </>
 }
 
