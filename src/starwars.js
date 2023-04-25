@@ -5,7 +5,6 @@ export function StarWars() {
     const [respostaPlanetas, setRespostaPlanetas] = useState(<div> </div>);
     const [respostaResidents, setResident] = useState();
     const [currentPage, setCurrentPage] = useState(1);
-    const [respostaPlanetName, setRespostaPlanetName] = useState();
 
     const handleNext = () => {
         setCurrentPage(currentPage + 1);
@@ -17,17 +16,19 @@ export function StarWars() {
         setCurrentPage(currentPage - 1);
 
     };
+    const goBack = () => {
+       planets();
+
+    };
 
     useEffect(() => {
         planets();
     }, [currentPage]);
-    // useEffect(() => {
-    //     planets(); 
-    // }, [respostaResidents]);
 
 
 
     function planets() {
+        setResident();
 
         let url = "https://swapi.dev/api/planets/?page=" + currentPage;
         let xmlhttp = new XMLHttpRequest();
@@ -43,12 +44,11 @@ export function StarWars() {
                     let gravity = planeta.gravity;
                     let poblation = planeta.population;
 
-                    html.push(<div onClick={() => showMore(planeta.name)} key={planeta.name}>
+                    html.push(<div class="col-4 center border border-primary m-2 bg-light " style={{ '--bs-bg-opacity': '.5' }} onClick={() => showMore(planeta.name)} key={planeta.name}>
                         <p>Nombre : {name}</p>
                         <p>Clima: {climate}</p>
                         <p>Gravedad: {gravity}</p>
                         <p>Poblacion: {poblation}</p>
-                        <hr></hr>
                     </div>);
 
                 });
@@ -61,6 +61,7 @@ export function StarWars() {
     }
     const residentsHtml = [];
     function showResidents(residents) {
+        setResident();
 
 
         let xmlhttpPeople = new XMLHttpRequest();
@@ -70,7 +71,6 @@ export function StarWars() {
             if (xmlhttpPeople.readyState == 4 && xmlhttpPeople.status == 200) {
                 let respostaJSONPeople = JSON.parse(xmlhttpPeople.responseText);
                 residentsHtml.push(<p key={respostaJSONPeople.name} onClick={() => showMoreResident(residents)}>{respostaJSONPeople.name}</p>);
-                console.log(residentsHtml);
 
                 //   setResident(residentsHtml);
 
@@ -79,12 +79,13 @@ export function StarWars() {
         }
         xmlhttpPeople.send();
         setTimeout(() => {
-            setResident(residentsHtml);
+            setResident(<div class="col-4 center border border-primary m-2 bg-light" style={{ '--bs-bg-opacity': '.5' }}> <h1>Residentes: </h1>{residentsHtml}</div>);
         }, 1000);
     }
 
 
     function showMore(name) {
+        setResident();
 
         let url = "https://swapi.dev/api/planets/?search=" + name;
         let xmlhttp = new XMLHttpRequest();
@@ -113,7 +114,10 @@ export function StarWars() {
 
                     });
 
-                    html.push(<div key={planeta.name}>
+                    html.push(
+                      
+                    <div class="col-4 center border border-primary m-2 bg-light " style={{ '--bs-bg-opacity': '.5' }} key={planeta.name}>
+
                         <p>Nombre : {name}</p>
                         <p>Clima: {climate}</p>
                         <p>Gravedad: {gravity}</p>
@@ -123,7 +127,6 @@ export function StarWars() {
                         <p>Diametro: {diameter}</p>
                         <p>Terreno: {terrain}</p>
                         <p>Agua: {surface_water}</p>
-                        <h1>Residentes: </h1>
                     </div>);
 
                     // html.push(<div>{respostaResidents}</div>);
@@ -137,9 +140,10 @@ export function StarWars() {
 
 
     }
-    let planetName = '';
 
     function showMoreResident(residents) {
+        setResident();
+
         let configFetch = {
             method: "GET",
             headers: { 'Content-Type': 'application/x-www-formurlencoded' }
@@ -172,7 +176,7 @@ export function StarWars() {
 
                                 planetName = objetoJSON.name;
 
-                                html.push(<div key={residentJSON.name}>
+                                html.push(<div class="col-4 center border border-primary m-2 bg-light " style={{ '--bs-bg-opacity': '.5' }} key={residentJSON.name}>
                                     <p>Nombre : {name}</p>
                                     <p>Altura: {height}</p>
                                     <p>Peso: {mass}</p>
@@ -182,7 +186,7 @@ export function StarWars() {
                                     <p>Color de ojos: {eye_color}</p>
                                     <p>Fecha de nacimiento: {birth_year}</p>
                                     <p onClick={() => showMore(planetName)}>Planeta de procedencia: {planetName}</p>
-        
+
                                 </div>);
                                 setRespostaPlanetas(html);
                                 setResident();
@@ -196,14 +200,31 @@ export function StarWars() {
         }, function (err) { console.log(err) }
         );
     }
-    return <><h3>Star Wars</h3>
-        <div>
-            <button button disabled={currentPage === 1} onClick={handlePrevious}> Previous</button>
-            <button button disabled={currentPage === 6} onClick={handleNext}> Next </button>
+    return <>
 
+
+        <div class="d-flex justify-content-center">
+            <div class="row">
+                <div class="col-12">
+                    <h1>Star Wars</h1>
+                </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+
+                        <li class="page-item"><a disabled={currentPage === 1} onClick={handlePrevious} class="page-link" >Previous</a></li>
+                        <li class="page-item"><a class="page-link"  onClick={goBack}>Go back</a></li>
+                        <li class="page-item"><a class="page-link" disabled={currentPage === 6} onClick={handleNext}>Next</a></li>
+
+                    </ul>
+                </nav>
+            </div>
         </div>
-        <div>{respostaPlanetas}</div>
-        <div>{respostaResidents}</div>
+        <div >
+            <div class="row justify-content-md-center">{respostaPlanetas} </div>
+            <div class="row justify-content-md-center">                       
+            {respostaResidents}
+            </div>
+        </div>
     </>
 }
 

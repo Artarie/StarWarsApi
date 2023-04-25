@@ -1,3 +1,13 @@
+h1, p{
+  color: white;
+}
+body{
+  background-image: url(https://i.pinimg.com/originals/a4/5e/e4/a45ee418aa77783d1a847190596d9796.jpg);
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: 100%;
+}
 .App {
   text-align: center;
 }
@@ -37,17 +47,3 @@
   }
 }
 
-button {
-  display: inline-block;
-}
-
-button {
-  color: black;
-  padding: 8px 16px;
-  text-decoration: none;
-}
-
-button:hover {
-  background-color: #4CAF50;
-  color: white;
-}
